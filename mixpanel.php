@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: MixPanel for WordPress 
-Plugin URI: http://pressable.com/
-Description: A relatively easy way to integrate MixPanel with your WordPress site
+Plugin URI: https://github.com/monaeo/mixpanel-wordpress
+Description: A relatively easy way to integrate MixPanel with your WordPress site (forked by Monaeo)
 Author: Vid Luther <code@pressable.com>
 Version: 0.4
 Author URI: http://pressable.com/
@@ -14,10 +14,21 @@ Author URI: http://pressable.com/
 //   require_once dirname( __FILE__ ) . '/page.php';
 // }
 
-namespace zippykid; 
+namespace mixpanel; 
 
 class mixPanel {
-	 public function __construct(){
+	
+	// Returns the contents of a parsed PHP file as a string
+	public static function get_require_contents($file) {
+		if (is_file($file)) {
+			ob_start();
+			require $file;
+			return ob_get_clean();
+		}
+		return false;
+	}
+	
+	public function __construct(){
         if(is_admin()){
 	    	add_action('admin_menu', array($this, 'add_settings_page'));
 	    	add_action('admin_init', array($this, 'mixpanel_init'));
@@ -49,6 +60,9 @@ class mixPanel {
 	        <?php submit_button(); ?>
 	    </form>
 	</div>
+	<h1>Integrating With Contact Forms</h1>
+	<p>To create a people profile when a contact form is sumitted add <code>on_sent_ok: monaeo_form_onsuccess(id)</code>, to the "Additional Settings" tab of the contact form. Set <code>id</code> to the id of the contact form from the shortcode (eg. 786).</p>
+	<p>To post an event, add <code>mixpanel.track('Event Name')</code>.
 <?php
     }
 	
@@ -135,6 +149,5 @@ class mixPanel {
 }
 
 $mixPanel = new mixPanel(); 
-
 
 ?>
